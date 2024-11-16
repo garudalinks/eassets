@@ -1,0 +1,1571 @@
+@{
+    System.Data.DataTable dtUnit = ViewBag.dtUnit as System.Data.DataTable;
+    System.Data.DataTable dtKec = ViewBag.dtKec as System.Data.DataTable;
+    System.Data.DataTable dtKel = ViewBag.dtKel as System.Data.DataTable;
+}
+
+
+<div class="row">
+    <div class="col-12">
+        <div class="page-title">
+            <h1>Aset Tetap Tanah</h1>
+        </div>
+        <div class="main-content">
+            <div class="row my-3">
+                <div class="col-md-3">
+                    <div class="search">
+                        <input id="search" placeholder="Search" class="dhx_sample-input" style="width: 200px">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <button type="button" class="dhx_sample-btn dhx_sample-btn--flat" onclick="btn_tambah_data()">
+                        Add Data
+                    </button>
+                </div>
+            </div>
+            <div class="table-data">
+                <div id="widget" style="height: calc(100% - 40px);"></div>
+            </div>
+            <div class="modal fade" id="form-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-fullscreen">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Tambah Data</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                     <div class="form-modal">
+                                <form method="post" id="form_perolehan_tanah" enctype="multipart/form-data">
+                                    <div class="row form-input" style="color:#212529;">
+                                        <input type="hidden" id="kib_a_id" name="kib_a_id" value="" />
+                                        <div class="col-md-12 col-lg-6">
+                                            <fieldset class="border p-3 mb-4">
+                                                <legend class="w-auto text-primary">Unit Pemakai</legend>
+                                                <div class="mb-3">
+                                                    <label for="jenis_pengguna_barang" class="form-label">Jenis Unit Pemakai</label>
+                                                    <select class="form-select" name="jenis_pengguna_barang" id="jenis_pengguna_barang">
+                                                        <option value="">Pilih</option>
+                                                        <option value="kuasa pengguna barang">Kuasa Pengguna Barang</option>
+                                                        <option value="pengguna barang">Pengguna Barang</option>
+                                                        <option value="pengelola barang">Pengelola Barang</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="opd" class="form-label">OPD</label>
+                                                    <select class="form-select" name="UnitID" id="UnitID">
+                                                        <option value="">Pilih</option>
+                                                        @if (dtUnit != null && dtUnit.Rows.Count > 0)
+                                                        {
+                                                            foreach (System.Data.DataRow dr in dtUnit.Rows)
+                                                            {
+                                                                <option value="@dr["UnitID"]">@dr["UnitNama"]</option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="unit_pengguna_barang_id" class="form-label">Nama Pengguna Barang</label>
+                                                    <select class="form-select" name="unit_pengguna_barang_id" id="unit_pengguna_barang_id">
+                                                        <option value="">Pilih</option>
+                                                        <option value="1">Nama Pengguna Barang</option>
+                                                    </select>
+                                                </div>
+                                                @*  <div class="mb-3">
+                                                <label for="opd" class="form-label">Pilih Kecamatan</label>
+                                                <select class="form-select" name="UnitID">
+                                                <option selected>Pilih</option>
+                                                @if (dtKec != null && dtKec.Rows.Count > 0)
+                                                {
+                                                foreach(System.Data.DataRow dr in dtKec.Rows)
+                                                {
+                                                <option value="@dr["kecamatan_id"]">@dr["nama"]</option>
+                                                }
+                                                }
+                                                </select>
+                                                </div> *@
+                                                <div class="mb-3">
+                                                    <label for="unit_alamat" class="form-label">Alamat</label>
+                                                    <textarea class="form-control" id="unit_alamat" name="unit_alamat"></textarea>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label for="tahun" class="form-label">Tahun Pengisian Formulir</label>
+                                                    <input type="text" name="tahun" id="tahun" value="2024" class="form-control" readonly disabled />
+                                                </div>
+                                            </fieldset>
+                                            <div class="row" style="color:#212529;">
+                                                <div class="col-md-12 col-lg-12 mt-3">
+                                                    <fieldset class="border p-3 mb-4">
+                                                        <legend class="w-auto text-primary">Informasi Perolehan</legend>
+                                                        <div class="mb-3">
+                                                            <label for="opd" class="form-label">Cara Perolehan</label>
+                                                            <select class="form-select" onclick="showFormCaraPerolehan()" name="barang_caraperolehan" id="barang_caraperolehan">
+                                                                <option value="">Pilih</option>
+                                                                <option value="pengadaan barang yang dibeli atau diperoleh atas beban APBD">Pengadaan Barang yang dibeli atau diperoleh atas beban APBD</option>
+                                                                <option value="hibah/sumbangan atau yang sejenis">Hibah/Sumbangan Atau Yang Sejenis</option>
+                                                                <option value="pelaksanaan dari perjanjian/kontrak">Pelaksanaan dari perjanjian/kontrak</option>
+                                                                <option value="ketentuan peraturan perundang-undangan">Ketentuan peraturan perundang-undangan</option>
+                                                                <option value="putusan pengadilan">Putusan Pengadilan</option>
+                                                                <option value="divestasi">Divestasi</option>
+                                                                <option value="hasil inventarisasi">Hasil Inventarisasi</option>
+                                                                <option value="hasil tukar menukar">Hasil tukar menukar</option>
+                                                                <option value="pembatalan penghapusan">Pembatalan penghapusan</option>
+                                                                <option value="perolehan/penerimaan lainnya">Perolehan/penerimaan lainnya</option>
+                                                            </select>
+                                                        </div>
+                                                        <div class="mb-3">
+                                                            <label for="barang_tanggal_perolehan" class="form-label">Tanggal Perolehan</label>
+                                                            <input type="date" name="barang_tanggal_perolehan" id="barang_tanggal_perolehan" class="form-control" />
+                                                        </div>
+                                                        @* /*Pengadaan Barang yang dibeli atau
+                                                        diperoleh atas beban APBD*/ *@
+                                                        <fieldset class="border p-3 mb-4" style="display:none" id="bebanapbd">
+                                                            <legend class="w-auto text-primary">
+                                                                Pengadaan Barang yang dibeli atau
+                                                                diperoleh atas beban APBD
+                                                            </legend>
+                                                            @*Diperoleh atas beban APBD dari belanja modal*@
+                                                            <fieldset class="border p-3 mb-4">
+                                                                <legend class="w-auto text-primary">
+                                                                    Diperoleh atas beban APBD dari Belanja Modal
+                                                                </legend>
+                                                                <fieldset class="border p-3 mb-4 mt-5">
+                                                                    <legend class="w-auto text-primary">
+                                                                        Belanja atas Pengadaan Barang
+                                                                    </legend>
+                                                                    <div class="row" style="color:#212529;">
+                                                                        <div class="col-md-12 col-lg-6 mt-3">
+                                                                            <div class="mb-3">
+                                                                                <label for="barang_diinputoleh_nama" class="form-label">Kode Sub Kegiatan</label>
+                                                                                <input type="text" name="barang_diinputoleh_nama" class="form-control" id="barang_diinputoleh_nama" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-12 col-lg-6 mt-3">
+                                                                            <div class="mb-3">
+                                                                                <label for="barang_diinputoleh_id" class="form-label">Nama Sub Kegiatan</label>
+                                                                                <input type="text" id="barang_diinputoleh_id" name="barang_diinputoleh_id" class="form-control" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-12 col-lg-6 mt-3">
+                                                                            <div class="mb-3">
+                                                                                <label for="barang_tanggal_input" class="form-label">Kode Belanja Daerah</label>
+                                                                                <input type="text" id="barang_tanggal_input" name="barang_tanggal_input" class="form-control" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-12 col-lg-6 mt-3">
+                                                                            <div class="mb-3">
+                                                                                <label for="barang_tanggal_input" class="form-label">Uraian Akun Belanja</label>
+                                                                                <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-12 col-lg-6 mt-3">
+                                                                            <div class="mb-3">
+                                                                                <label for="barang_diinputoleh_nama" class="form-label">Jumlah Barang/luas</label>
+                                                                                <input type="number" name="barang_diinputoleh_nama" class="form-control" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-12 col-lg-6 mt-3">
+                                                                            <div class="mb-3">
+                                                                                <label for="barang_diinputoleh_id" class="form-label">Satuan Barang</label>
+                                                                                <input type="text" name="barang_diinputoleh_id" class="form-control" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-12 col-lg-6 mt-3">
+                                                                            <div class="mb-3">
+                                                                                <label for="barang_tanggal_input" class="form-label">Harga Satuan (Rp)</label>
+                                                                                <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-12 col-lg-6 mt-3">
+                                                                            <div class="mb-3">
+                                                                                <label for="barang_tanggal_input" class="form-label">Total Nilai Barang</label>
+                                                                                <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-12 col-lg-12 mt-3">
+                                                                            <fieldset class="border p-3 mb-4">
+                                                                                <legend class="w-auto text-primary">
+                                                                                    Berita Acara Serah Terima Barang Pekerjaan
+                                                                                </legend>
+                                                                                <div class="row">
+                                                                                    <div class="col-md-12 col-lg-6 mt-3">
+                                                                                        <div class="mb-3">
+                                                                                            <label for="barang_tanggal_input" class="form-label">Nomor</label>
+                                                                                            <input type="number" name="barang_tanggal_input" class="form-control" />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-md-12 col-lg-6 mt-3">
+                                                                                        <div class="mb-3">
+                                                                                            <label for="barang_tanggal_input" class="form-label">Tanggal</label>
+                                                                                            <input type="date" name="barang_tanggal_input" class="form-control" />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                        <div class="col-md-12 col-lg-12 mt-3">
+                                                                            <fieldset class="border p-3 mb-4">
+                                                                                <legend class="w-auto text-primary">
+                                                                                    Bentuk Kontrak
+                                                                                </legend>
+                                                                                <fieldset class="border p-3 mb-4 mt-5">
+                                                                                    <legend class="w-auto text-primary">
+                                                                                        Bukti Pembelian Pembayaran
+                                                                                    </legend>
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-12 col-lg-12 mt-3">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nama Penyedia</label>
+                                                                                                <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nomor</label>
+                                                                                                <input type="number" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Tanggal</label>
+                                                                                                <input type="date" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </fieldset>
+                                                                                <fieldset class="border p-3 mb-4">
+                                                                                    <legend class="w-auto text-primary">
+                                                                                        Kuitansi
+                                                                                    </legend>
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-12 col-lg-12 mt-3">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nama Penyedia</label>
+                                                                                                <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nomor</label>
+                                                                                                <input type="number" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Tanggal</label>
+                                                                                                <input type="date" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </fieldset>
+                                                                                <fieldset class="border p-3 mb-4">
+                                                                                    <legend class="w-auto text-primary">
+                                                                                        Surat Perintah Kerja
+                                                                                    </legend>
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-12 col-lg-12 mt-3">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nama Penyedia</label>
+                                                                                                <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nomor</label>
+                                                                                                <input type="number" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Tanggal</label>
+                                                                                                <input type="date" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </fieldset>
+                                                                                <fieldset class="border p-3 mb-4">
+                                                                                    <legend class="w-auto text-primary">
+                                                                                        Surat Perjanjian
+                                                                                    </legend>
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-12 col-lg-12 mt-3">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nama Penyedia</label>
+                                                                                                <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nomor</label>
+                                                                                                <input type="number" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Tanggal</label>
+                                                                                                <input type="date" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </fieldset>
+                                                                                <fieldset class="border p-3 mb-4">
+                                                                                    <legend class="w-auto text-primary">
+                                                                                        Surat Pesanan
+                                                                                    </legend>
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-12 col-lg-12 mt-3">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nama Penyedia</label>
+                                                                                                <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nomor</label>
+                                                                                                <input type="number" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Tanggal</label>
+                                                                                                <input type="date" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </fieldset>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                        <div class="col-md-12 col-lg-12 mt-3">
+                                                                            <fieldset class="border p-3 mb-4">
+                                                                                <legend class="w-auto text-primary">Dokumen Pendukung Lainnya</legend>
+                                                                                <table class="table table-bordered bg-none mt-5">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th scope="col">#</th>
+                                                                                            <th scope="col">Nama Dokumen</th>
+                                                                                            <th scope="col">Nomor</th>
+                                                                                            <th scope="col">Tanggal</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                            <th scope="row">1</th>
+                                                                                            <td><input type="text" name="barang_speklain_nama1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="text" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">2</th>
+                                                                                            <td><input type="text" name="barang_speklain_nama2" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="text" name="barang_speklain_nilai2" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">3</th>
+                                                                                            <td><input type="text" name="barang_speklain_nama3" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="text" name="barang_speklain_nilai3" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">4</th>
+                                                                                            <td><input type="text" name="barang_speklain_nama4" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="text" name="barang_speklain_nilai4" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">5</th>
+                                                                                            <td><input type="text" name="barang_speklain_nama5" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="text" name="barang_speklain_nilai5" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                    </div>
+                                                                </fieldset>
+                                                                <fieldset class="border p-3 mb-4 mt-5">
+                                                                    <legend class="w-auto text-primary">
+                                                                        Belanja atas Biaya Atribusi
+                                                                    </legend>
+                                                                    <div class="row" style="color:#212529;">
+                                                                        <div class="col-md-12 col-lg-6 mt-3">
+                                                                            <div class="mb-3">
+                                                                                <label for="barang_diinputoleh_nama" class="form-label">Kode Sub Kegiatan</label>
+                                                                                <input type="text" name="barang_diinputoleh_nama" class="form-control" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-12 col-lg-6 mt-3">
+                                                                            <div class="mb-3">
+                                                                                <label for="barang_diinputoleh_id" class="form-label">Nama Sub Kegiatan</label>
+                                                                                <input type="text" name="barang_diinputoleh_id" class="form-control" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-12 col-lg-12">
+                                                                            <div class="mb-3">
+                                                                                <label for="barang_tanggal_input" class="form-label">Kode Belanja Daerah</label>
+                                                                                <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-12 col-lg-12">
+                                                                            <div class="mb-3">
+                                                                                <label for="barang_tanggal_input" class="form-label">Uraian Akun Belanja Daerah</label>
+                                                                                <textarea type="text" name="barang_tanggal_input" class="form-control"></textarea>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-md-12 col-lg-12 mt-3">
+                                                                            <fieldset class="border p-3 mb-4">
+                                                                                <legend class="w-auto text-primary">Jenis dan Nilai Biaya Atribusi</legend>
+                                                                                <table class="table table-bordered bg-none mt-5">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th scope="col">#</th>
+                                                                                            <th scope="col">Jenis</th>
+                                                                                            <th scope="col">Biaya Atribusi</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                            <th scope="row">1</th>
+                                                                                            <td><input type="text" name="barang_speklain_nama1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="text" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">2</th>
+                                                                                            <td><input type="text" name="barang_speklain_nama2" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="text" name="barang_speklain_nilai2" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">3</th>
+                                                                                            <td><input type="text" name="barang_speklain_nama3" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="text" name="barang_speklain_nilai3" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">4</th>
+                                                                                            <td><input type="text" name="barang_speklain_nama4" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="text" name="barang_speklain_nilai4" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">5</th>
+                                                                                            <td><input type="text" name="barang_speklain_nama5" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="text" name="barang_speklain_nilai5" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                        <div class="col-md-12 col-lg-12 mt-3">
+                                                                            <fieldset class="border p-3 mb-4">
+                                                                                <legend class="w-auto text-primary">
+                                                                                    Berita Acara Serah Terima Barang Pekerjaan
+                                                                                </legend>
+                                                                                <div class="row">
+                                                                                    <div class="col-md-12 col-lg-6 mt-3">
+                                                                                        <div class="mb-3">
+                                                                                            <label for="barang_tanggal_input" class="form-label">Nomor</label>
+                                                                                            <input type="number" name="barang_tanggal_input" class="form-control" />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div class="col-md-12 col-lg-6 mt-3">
+                                                                                        <div class="mb-3">
+                                                                                            <label for="barang_tanggal_input" class="form-label">Tanggal</label>
+                                                                                            <input type="date" name="barang_tanggal_input" class="form-control" />
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                        <div class="col-md-12 col-lg-12 mt-3">
+                                                                            <fieldset class="border p-3 mb-4">
+                                                                                <legend class="w-auto text-primary">
+                                                                                    Bentuk Kontrak
+                                                                                </legend>
+                                                                                <fieldset class="border p-3 mb-4 mt-5">
+                                                                                    <legend class="w-auto text-primary">
+                                                                                        Bukti Pembelian Pembayaran
+                                                                                    </legend>
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-12 col-lg-12 mt-3">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nama Penyedia</label>
+                                                                                                <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nomor</label>
+                                                                                                <input type="number" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Tanggal</label>
+                                                                                                <input type="date" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </fieldset>
+                                                                                <fieldset class="border p-3 mb-4">
+                                                                                    <legend class="w-auto text-primary">
+                                                                                        Kuitansi
+                                                                                    </legend>
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-12 col-lg-12 mt-3">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nama Penyedia</label>
+                                                                                                <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nomor</label>
+                                                                                                <input type="number" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Tanggal</label>
+                                                                                                <input type="date" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </fieldset>
+                                                                                <fieldset class="border p-3 mb-4">
+                                                                                    <legend class="w-auto text-primary">
+                                                                                        Surat Perintah Kerja
+                                                                                    </legend>
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-12 col-lg-12 mt-3">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nama Penyedia</label>
+                                                                                                <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nomor</label>
+                                                                                                <input type="number" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Tanggal</label>
+                                                                                                <input type="date" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </fieldset>
+                                                                                <fieldset class="border p-3 mb-4">
+                                                                                    <legend class="w-auto text-primary">
+                                                                                        Surat Perjanjian
+                                                                                    </legend>
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-12 col-lg-12 mt-3">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nama Penyedia</label>
+                                                                                                <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nomor</label>
+                                                                                                <input type="number" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Tanggal</label>
+                                                                                                <input type="date" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </fieldset>
+                                                                                <fieldset class="border p-3 mb-4">
+                                                                                    <legend class="w-auto text-primary">
+                                                                                        Surat Pesanan
+                                                                                    </legend>
+                                                                                    <div class="row">
+                                                                                        <div class="col-md-12 col-lg-12 mt-3">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nama Penyedia</label>
+                                                                                                <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Nomor</label>
+                                                                                                <input type="number" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                        <div class="col-md-12 col-lg-6">
+                                                                                            <div class="mb-3">
+                                                                                                <label for="barang_tanggal_input" class="form-label">Tanggal</label>
+                                                                                                <input type="date" name="barang_tanggal_input" class="form-control" />
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </fieldset>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                        <div class="col-md-12 col-lg-12 mt-3">
+                                                                            <fieldset class="border p-3 mb-4">
+                                                                                <legend class="w-auto text-primary">Dokumen Pendukung Lainnya</legend>
+                                                                                <table class="table table-bordered bg-none mt-5">
+                                                                                    <thead>
+                                                                                        <tr>
+                                                                                            <th scope="col">#</th>
+                                                                                            <th scope="col">Nama Dokumen</th>
+                                                                                            <th scope="col">Nomor</th>
+                                                                                            <th scope="col">Tanggal</th>
+                                                                                        </tr>
+                                                                                    </thead>
+                                                                                    <tbody>
+                                                                                        <tr>
+                                                                                            <th scope="row">1</th>
+                                                                                            <td><input type="text" name="barang_speklain_nama1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="text" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">2</th>
+                                                                                            <td><input type="text" name="barang_speklain_nama2" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="text" name="barang_speklain_nilai2" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">3</th>
+                                                                                            <td><input type="text" name="barang_speklain_nama3" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="text" name="barang_speklain_nilai3" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">4</th>
+                                                                                            <td><input type="text" name="barang_speklain_nama4" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="text" name="barang_speklain_nilai4" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                        </tr>
+                                                                                        <tr>
+                                                                                            <th scope="row">5</th>
+                                                                                            <td><input type="text" name="barang_speklain_nama5" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="text" name="barang_speklain_nilai5" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                            <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                                        </tr>
+                                                                                    </tbody>
+                                                                                </table>
+                                                                            </fieldset>
+                                                                        </div>
+                                                                    </div>
+                                                                </fieldset>
+                                                            </fieldset>
+                                                            @*Diperoleh atas beban APBD dari belanja modal end*@
+                                                            @*Nilai Perolehan Barang (Rp)*@
+                                                            <fieldset class="border p-3 mb-4">
+                                                                <legend class="w-auto text-primary">
+                                                                    Nilai Perolehan Barang (Rp)
+                                                                </legend>
+                                                                <div class="mb-3">
+                                                                    <label for="barang_tanggal_perolehan" class="form-label">Nilai Perolehan Barang</label>
+                                                                    <input type="text" name="barang_tanggal_perolehan" class="form-control" />
+                                                                </div>
+                                                            </fieldset>
+                                                            @*Nilai Perolehan Barang (Rp) end*@
+                                                            @*Harga Satuan Perolehan/Penerimaan (Rp)*@
+                                                            <fieldset class="border p-3 mb-4">
+                                                                <legend class="w-auto text-primary">
+                                                                    Harga Satuan Perolehan/Penerimaan (Rp)
+                                                                </legend>
+                                                                <div class="mb-3">
+                                                                    <label for="barang_tanggal_perolehan" class="form-label">Harga Satuan Perolehan/Penerimaan</label>
+                                                                    <input type="text" name="barang_tanggal_perolehan" class="form-control" />
+                                                                </div>
+                                                            </fieldset>
+                                                            @*Harga Satuan Perolehan/Penerimaan (Rp) end*@
+                                                            <fieldset />
+                                                        </fieldset>
+                                                    </fieldset>
+                                                    @* /*Pengadaan Barang yang dibeli atau
+                                                    diperoleh atas beban APBD end*/ *@
+
+                                                    @* /* Hibah/Sumbangan atau yang sejenis */ *@
+                                                    <fieldset class="border p-3 mb-3" style="display:none">
+                                                        <legend class="w-auto text-primary">Hibah/Sumbangan atau yang sejenis</legend>
+                                                        <fieldset class="border p-3 mb-3">
+                                                            <legend class="w-auto text-primary">
+                                                                Informasi Pencatatan Perolehan/Penerimaan
+                                                            </legend>
+                                                            <div class="row">
+                                                                <div class="col-md-12 col-lg-12">
+                                                                    <div class="mb-3">
+                                                                        <label for="barang_tanggal_perolehan" class="form-label">Sumber Dana</label>
+                                                                        <input type="text" name="barang_tanggal_perolehan" class="form-control" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12 col-lg-12">
+                                                                    <div class="mb-3">
+                                                                        <label for="barang_tanggal_perolehan" class="form-label">
+                                                                            Pihak Pemberi Hibah/sumbangan atau
+                                                                            yang sejenis
+                                                                        </label>
+                                                                        <input type="text" name="barang_tanggal_perolehan" class="form-control" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12 col-lg-12">
+                                                                    <div class="mb-3">
+                                                                        <label for="barang_tanggal_perolehan" class="form-label">
+                                                                            Tanggal Perolehan/penerimaan
+                                                                        </label>
+                                                                        <input type="date" name="barang_tanggal_perolehan" class="form-control" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <fieldset class="border p-3 mb-3">
+                                                                <legend class="w-auto text-primary">
+                                                                    Perolehan/penerimaan atas Barang
+                                                                </legend>
+                                                                <div class="row">
+                                                                    <div class="col-md-12 col-lg-6 mt-3">
+                                                                        <div class="mb-3">
+                                                                            <label for="barang_diinputoleh_nama" class="form-label">Jumlah Barang/luas</label>
+                                                                            <input type="number" name="barang_diinputoleh_nama" class="form-control" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12 col-lg-6 mt-3">
+                                                                        <div class="mb-3">
+                                                                            <label for="barang_diinputoleh_id" class="form-label">Satuan Barang</label>
+                                                                            <input type="text" name="barang_diinputoleh_id" class="form-control" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12 col-lg-6 mt-3">
+                                                                        <div class="mb-3">
+                                                                            <label for="barang_tanggal_input" class="form-label">Harga Satuan (Rp)</label>
+                                                                            <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12 col-lg-6 mt-3">
+                                                                        <div class="mb-3">
+                                                                            <label for="barang_tanggal_input" class="form-label">Total Nilai Barang</label>
+                                                                            <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </fieldset>
+                                                        <fieldset class="border p-3 mb-3">
+                                                            <legend class="w-auto text-primary">
+                                                                Dokumen Sumber Perolehan/Penerimaan
+                                                                Berita Acara Serah Terima
+                                                                Hibah/sumbangan atau yang sejenis
+                                                            </legend>
+                                                            <div class="row">
+                                                                <div class="col-md-12 col-lg-6 mt-3">
+                                                                    <div class="mb-3">
+                                                                        <label for="barang_diinputoleh_nama" class="form-label">Nomor</label>
+                                                                        <input type="number" name="barang_diinputoleh_nama" class="form-control" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12 col-lg-6 mt-3">
+                                                                    <div class="mb-3">
+                                                                        <label for="barang_diinputoleh_id" class="form-label">Tanggal</label>
+                                                                        <input type="date" name="barang_diinputoleh_id" class="form-control" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </fieldset>
+                                                        <fieldset class="border p-3 mb-4">
+                                                            <legend class="w-auto text-primary">Dokumen Pendukung Lainnya</legend>
+                                                            <table class="table table-bordered bg-none mt-5">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th scope="col">#</th>
+                                                                        <th scope="col">Nama Dokumen</th>
+                                                                        <th scope="col">Nomor</th>
+                                                                        <th scope="col">Tanggal</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <th scope="row">1</th>
+                                                                        <td><input type="text" name="barang_speklain_nama1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="text" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th scope="row">2</th>
+                                                                        <td><input type="text" name="barang_speklain_nama2" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="text" name="barang_speklain_nilai2" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th scope="row">3</th>
+                                                                        <td><input type="text" name="barang_speklain_nama3" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="text" name="barang_speklain_nilai3" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th scope="row">4</th>
+                                                                        <td><input type="text" name="barang_speklain_nama4" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="text" name="barang_speklain_nilai4" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th scope="row">5</th>
+                                                                        <td><input type="text" name="barang_speklain_nama5" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="text" name="barang_speklain_nilai5" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </fieldset>
+                                                        <fieldset class="border p-3 mb-4">
+                                                            <legend class="w-auto text-primary">Diinput Oleh</legend>
+                                                            <div class="row">
+                                                                <div class="col-md-12 col-lg-6">
+                                                                    <div class="mb-3">
+                                                                        <label for="barang_diinputoleh_nama" class="form-label">Nama</label>
+                                                                        <input type="text" name="barang_diinputoleh_nama" class="form-control" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12 col-lg-6">
+                                                                    <div class="mb-3">
+                                                                        <label for="barang_diinputoleh_id" class="form-label">NIP</label>
+                                                                        <input type="text" name="barang_diinputoleh_id" class="form-control" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12 col-lg-12">
+                                                                <div class="mb-3">
+                                                                    <label for="barang_tanggal_input" class="form-label">Tanggal Transaksi</label>
+                                                                    <input type="date" name="barang_tanggal_input" class="form-control" />
+                                                                </div>
+                                                            </div>
+                                                        </fieldset>
+                                                    </fieldset>
+                                                    @* /* Hibah/Sumbangan atau yang sejenis end */ *@
+
+                                                    @* /* PELAKSANAAN DARI PERJANJIAN/KONTRAK */ *@
+                                                    <fieldset class="border p-3 mb-3" style="display:none">
+                                                        <legend class="w-auto text-primary">Pelaksanaan dari Perjanjian/Kontrak</legend>
+                                                        <fieldset class="border p-3 mb-3">
+                                                            <legend class="w-auto text-primary">
+                                                                Informasi Pencatatan Perolehan/Penerimaan
+                                                            </legend>
+                                                            <div class="row">
+                                                                <div class="col-md-12 col-lg-12">
+                                                                    <div class="mb-3">
+                                                                        <label for="barang_tanggal_perolehan" class="form-label">Sumber Dana</label>
+                                                                        <input type="text" name="barang_tanggal_perolehan" class="form-control" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12 col-lg-12">
+                                                                    <div class="mb-3">
+                                                                        <label for="barang_tanggal_perolehan" class="form-label">
+                                                                            Pihak Pemberi Hibah/sumbangan atau
+                                                                            yang sejenis
+                                                                        </label>
+                                                                        <input type="text" name="barang_tanggal_perolehan" class="form-control" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12 col-lg-12">
+                                                                    <div class="mb-3">
+                                                                        <label for="barang_tanggal_perolehan" class="form-label">
+                                                                            Tanggal Perolehan/penerimaan
+                                                                        </label>
+                                                                        <input type="date" name="barang_tanggal_perolehan" class="form-control" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <fieldset class="border p-3 mb-3">
+                                                                <legend class="w-auto text-primary">
+                                                                    Perolehan/penerimaan atas Barang
+                                                                </legend>
+                                                                <div class="row">
+                                                                    <div class="col-md-12 col-lg-6 mt-3">
+                                                                        <div class="mb-3">
+                                                                            <label for="barang_diinputoleh_nama" class="form-label">Jumlah Barang/luas</label>
+                                                                            <input type="number" name="barang_diinputoleh_nama" class="form-control" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12 col-lg-6 mt-3">
+                                                                        <div class="mb-3">
+                                                                            <label for="barang_diinputoleh_id" class="form-label">Satuan Barang</label>
+                                                                            <input type="text" name="barang_diinputoleh_id" class="form-control" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12 col-lg-6 mt-3">
+                                                                        <div class="mb-3">
+                                                                            <label for="barang_tanggal_input" class="form-label">Harga Satuan (Rp)</label>
+                                                                            <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12 col-lg-6 mt-3">
+                                                                        <div class="mb-3">
+                                                                            <label for="barang_tanggal_input" class="form-label">Total Nilai Barang</label>
+                                                                            <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </fieldset>
+                                                        <fieldset class="border p-3 mb-3">
+                                                            <legend class="w-auto text-primary">
+                                                                Dokumen Sumber Perolehan/Penerimaan
+                                                            </legend>
+                                                            <fieldset class="border p-3 mb-3">
+                                                                <legend class="w-auto text-primary">
+                                                                    Dokumen
+                                                                </legend>
+                                                                <div class="row">
+                                                                    <div class="col-md-12 col-lg-6 mt-3">
+                                                                        <div class="mb-3">
+                                                                            <label for="barang_diinputoleh_nama" class="form-label">Nomor</label>
+                                                                            <input type="number" name="barang_diinputoleh_nama" class="form-control" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12 col-lg-6 mt-3">
+                                                                        <div class="mb-3">
+                                                                            <label for="barang_diinputoleh_id" class="form-label">Tanggal</label>
+                                                                            <input type="date" name="barang_diinputoleh_id" class="form-control" />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                            <fieldset class="border p-3 mb-4">
+                                                                <legend class="w-auto text-primary">
+                                                                    Surat Perjanjian/Kontrak
+                                                                </legend>
+                                                                <div class="row">
+                                                                    <div class="col-md-12 col-lg-12 mt-3">
+                                                                        <div class="mb-3">
+                                                                            <label for="barang_tanggal_input" class="form-label">Nama Perjanjian/Kontrak</label>
+                                                                            <input type="text" name="barang_tanggal_input" class="form-control" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12 col-lg-6">
+                                                                        <div class="mb-3">
+                                                                            <label for="barang_tanggal_input" class="form-label">Nomor</label>
+                                                                            <input type="number" name="barang_tanggal_input" class="form-control" />
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-md-12 col-lg-6">
+                                                                        <div class="mb-3">
+                                                                            <label for="barang_tanggal_input" class="form-label">Tanggal</label>
+                                                                            <input type="date" name="barang_tanggal_input" class="form-control" />
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </fieldset>
+                                                        </fieldset>
+                                                        <fieldset class="border p-3 mb-4">
+                                                            <legend class="w-auto text-primary">Dokumen Pendukung Lainnya</legend>
+                                                            <table class="table table-bordered bg-none mt-5">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th scope="col">#</th>
+                                                                        <th scope="col">Nama Dokumen</th>
+                                                                        <th scope="col">Nomor</th>
+                                                                        <th scope="col">Tanggal</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <th scope="row">1</th>
+                                                                        <td><input type="text" name="barang_speklain_nama1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="text" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th scope="row">2</th>
+                                                                        <td><input type="text" name="barang_speklain_nama2" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="text" name="barang_speklain_nilai2" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th scope="row">3</th>
+                                                                        <td><input type="text" name="barang_speklain_nama3" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="text" name="barang_speklain_nilai3" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th scope="row">4</th>
+                                                                        <td><input type="text" name="barang_speklain_nama4" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="text" name="barang_speklain_nilai4" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th scope="row">5</th>
+                                                                        <td><input type="text" name="barang_speklain_nama5" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="text" name="barang_speklain_nilai5" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                        <td><input type="date" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" /></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </fieldset>
+                                                        <fieldset class="border p-3 mb-4">
+                                                            <legend class="w-auto text-primary">Diinput Oleh</legend>
+                                                            <div class="row">
+                                                                <div class="col-md-12 col-lg-6">
+                                                                    <div class="mb-3">
+                                                                        <label for="barang_diinputoleh_nama" class="form-label">Nama</label>
+                                                                        <input type="text" name="barang_diinputoleh_nama" class="form-control" />
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-12 col-lg-6">
+                                                                    <div class="mb-3">
+                                                                        <label for="barang_diinputoleh_id" class="form-label">NIP</label>
+                                                                        <input type="text" name="barang_diinputoleh_id" class="form-control" />
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12 col-lg-12">
+                                                                <div class="mb-3">
+                                                                    <label for="barang_tanggal_input" class="form-label">Tanggal Transaksi</label>
+                                                                    <input type="date" name="barang_tanggal_input" class="form-control" />
+                                                                </div>
+                                                            </div>
+                                                        </fieldset>
+                                                    </fieldset>
+                                                    @* /* Hibah/Sumbangan atau yang sejenis end */ *@
+                                                </div>
+                                            </div>
+                                            <div class="row" style="color:#212529;">
+                                                <div class="col-md-12 col-lg-12 mt-3">
+                                                    <fieldset class="border p-3 mb-4">
+                                                        <legend class="w-auto text-primary">Foto Denah</legend>
+                                                        <div class="mb-3">
+                                                            <label for="barang_fotodenah_file" class="form-label">Foto Denah</label>
+                                                            <input type="file" name="barang_fotodenah_file" class="form-control" id="barang_fotodenah_file" />
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="color:#212529;">
+                                                <div class="col-md-12 col-lg-12 mt-3">
+                                                    <fieldset class="border p-3 mb-4">
+                                                        <legend class="w-auto text-primary">Keterangan Tambahan</legend>
+                                                        <div class="mb-3">
+                                                            <label for="barang_keterangan" class="form-label">Keterangan</label>
+                                                            <textarea class="form-control" id="barang_keterangan" name="barang_keterangan"></textarea>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                            <div class="row" style="color:#212529;">
+                                                <div class="col-md-12 col-lg-12 mt-3">
+                                                    <fieldset class="border p-3 mb-4">
+                                                        <legend class="w-auto text-primary">Diinput Oleh</legend>
+                                                        <div class="row">
+                                                            <div class="col-md-12 col-lg-6">
+                                                                <div class="mb-3">
+                                                                    <label for="barang_diinputoleh_nama" class="form-label">Nama</label>
+                                                                    <input type="text" name="barang_diinputoleh_nama" class="form-control" id="barang_diinputoleh_nama1" />
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-md-12 col-lg-6">
+                                                                <div class="mb-3">
+                                                                    <label for="barang_diinputoleh_id" class="form-label">NIP</label>
+                                                                    <input type="text" name="barang_diinputoleh_id" class="form-control" id="barang_diinputoleh_id1" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-12 col-lg-12">
+                                                            <div class="mb-3">
+                                                                <label for="barang_tanggal_input" class="form-label">Tanggal Transaksi</label>
+                                                                <input type="date" name="barang_tanggal_input" class="form-control" id="barang_tanggal_input1" />
+                                                            </div>
+                                                        </div>
+                                                    </fieldset>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12 col-lg-6">
+                                            <fieldset class="border p-3 mb-4">
+                                                <legend class="w-auto text-primary">Data Barang</legend>
+                                                <div class="row">
+                                                    <div class="col-md-12 col-lg-6">
+                                                        <div class="mb-3">
+                                                            <label for="barang_kode_barang" class="form-label">Kode Barang</label>
+                                                            <input type="text" name="barang_kode_barang" class="form-control" id="barang_kode_barang" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12 col-lg-6">
+                                                        <div class="mb-3">
+                                                            <label for="barang_kode_lokasi" class="form-label">Kode Lokasi</label>
+                                                            <input type="text" name="barang_kode_lokasi" class="form-control" id="barang_kode_lokasi" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12 col-lg-6">
+                                                        <div class="mb-3">
+                                                            <label for="barang_kode_reg_barang" class="form-label">Kode Register</label>
+                                                            <input type="text" name="barang_kode_reg_barang" class="form-control" id="barang_kode_reg_barang" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12 col-lg-6">
+                                                        <div class="mb-3">
+                                                            <label for="barang_nama_barang" class="form-label">Nama Barang</label>
+                                                            <input type="text" name="barang_nama_barang" class="form-control" id="barang_nama_barang" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12 col-lg-6">
+                                                        <div class="mb-3">
+                                                            <label for="barang_spesifikasi" class="form-label">Spesifikasi Nama Barang</label>
+                                                            <textarea class="form-control" id="barang_spesifikasi" name="barang_spesifikasi"></textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12 col-lg-6">
+                                                        <div class="mb-3">
+                                                            <label for="barang_luas_tanah" class="form-label">Luas Tanah</label>
+                                                            <input type="text" name="barang_luas_tanah" class="form-control" id="barang_luas_tanah" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12 col-lg-6">
+                                                        <div class="mb-3">
+                                                            <label for="barang_satuan" class="form-label">Satuan</label>
+                                                            <input type="text" name="barang_satuan" class="form-control" id="barang_satuan" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-md-12 col-lg-6">
+                                                        <div class="mb-3">
+                                                            <label for="barang_kondisi_barang" class="form-label">Kondisi Barang</label>
+                                                            <select class="form-select" name="barang_kondisi_barang" id="barang_kondisi_barang">
+                                                                <option value="">Pilih</option>
+                                                                <option value="baik">Baik</option>
+                                                                <option value="rusak ringan">Rusak Ringan</option>
+                                                                <option value="rusak berat atau usang">Rusak Berat atau Usang</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-3" style="color:#212529;">
+                                                    <div class="col-md-12 col-lg-12">
+                                                        <fieldset class="border p-3 mb-4">
+                                                            <legend class="w-auto text-primary">Lokasi</legend>
+                                                            <div class="mb-3">
+                                                                <label for="barang_lok_kecamatan_id" class="form-label">Kecamatan</label>
+                                                                <select class="form-select" name="barang_lok_kecamatan_id" id="barang_lok_kecamatan_id" onclick="filterKel()">
+                                                                    <option value="">Pilih</option>
+                                                                    @if (dtKec != null && dtKec.Rows.Count > 0)
+                                                                    {
+                                                                        foreach (System.Data.DataRow dr in dtKec.Rows)
+                                                                        {
+                                                                            <option value="@dr["kecamatan_id"]-@dr["nama"]">@dr["nama"]</option>
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="barang_lok_kelurahan_desa_id" class="form-label">Kelurahan</label>
+                                                                <select class="form-select" name="barang_lok_kelurahan_desa_id" id="barang_lok_kelurahan_desa_id">
+                                                                    <option>Pilih</option>
+                                                                    @* @if (dtKel != null && dtKel.Rows.Count > 0)
+                                                                    {
+                                                                        foreach (System.Data.DataRow dr in dtKel.Rows)
+                                                                        {
+                                                                            <option value="@dr["kelurahan_id"]">@dr["nama"]</option>
+                                                                        }
+                                                                    } *@
+                                                                </select>
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="barang_lok_jalan" class="form-label">Nama Jalan</label>
+                                                                <input type="text" name="barang_lok_jalan" class="form-control" id="barang_lok_jalan" />
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="barang_lok_rt_rw" class="form-label">RT/RW</label>
+                                                                <input class="form-control" id="barang_lok_rt_rw" name="barang_lok_rt_rw" />
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="barang_lok_koordinat" class="form-label">Titik Koordinat</label>
+                                                                <input class="form-control" id="barang_lok_koordinat" name="barang_lok_koordinat">
+                                                            </div>
+                                                        </fieldset>
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-3" style="color:#212529">
+                                                    <div class="col-md-12 col-lg-12">
+                                                        <fieldset class="border p-3 mb-4">
+                                                            <legend class="w-auto text-primary">Spesifikasi Lainnya</legend>
+                                                            <table class="table table-bordered">
+                                                                <thead>
+                                                                    <tr>
+                                                                        <th scope="col">No</th>
+                                                                        <th scope="col">Nama</th>
+                                                                        <th scope="col">Nilai</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <th scope="row">1</th>
+                                                                        <td><input type="text" name="barang_speklain_nama1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" id="barang_speklain_nama1" /></td>
+                                                                        <td><input type="text" name="barang_speklain_nilai1" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" id="barang_speklain_nilai1" /></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th scope="row">2</th>
+                                                                        <td><input type="text" name="barang_speklain_nama2" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" id="barang_speklain_nama2" /></td>
+                                                                        <td><input type="text" name="barang_speklain_nilai2" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" id="barang_speklain_nilai2" /></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th scope="row">3</th>
+                                                                        <td><input type="text" name="barang_speklain_nama3" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" id="barang_speklain_nama3" /></td>
+                                                                        <td><input type="text" name="barang_speklain_nilai3" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" id="barang_speklain_nilai3" /></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th scope="row">4</th>
+                                                                        <td><input type="text" name="barang_speklain_nama4" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" id="barang_speklain_nama4" /></td>
+                                                                        <td><input type="text" name="barang_speklain_nilai4" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" id="barang_speklain_nilai4" /></td>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <th scope="row">5</th>
+                                                                        <td><input type="text" name="barang_speklain_nama5" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" id="barang_speklain_nama5" /></td>
+                                                                        <td><input type="text" name="barang_speklain_nilai5" class="form-control" style="border:none; background:none;outline: none; box-shadow: none;" onfocus="this.style.border='none'" id="barang_speklain_nilai5" /></td>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </fieldset>
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-3" style="color:#212529;">
+                                                    <div class="col-md-12 col-lg-12">
+                                                        <fieldset class="border p-3 mb-4">
+                                                            <legend class="w-auto text-primary">Dokumen Kepemilikan</legend>
+                                                            <div class="mb-3">
+                                                                <label for="barang_dok_nama_dok" class="form-label">Nama Dokumen</label>
+                                                                <input type="text" name="barang_dok_nama_dok" class="form-control" id="barang_dok_nama_dok" />
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="barang_dok_nomor" class="form-label">Nomor</label>
+                                                                <input type="number" name="barang_dok_nomor" class="form-control" id="barang_dok_nomor" />
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="barang_dok_tanggal" class="form-label">Tanggal</label>
+                                                                <input type="date" name="barang_dok_tanggal" class="form-control" id="barang_dok_tanggal" />
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="barang_dok_nama_kepemilikan" class="form-label">Nama Kepemilikan</label>
+                                                                <input class="form-control" id="barang_dok_nama_kepemilikan" name="barang_dok_nama_kepemilikan" />
+                                                            </div>
+                                                        </fieldset>
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-3" style="color:#212529;">
+                                                    <div class="col-md-12 col-lg-12">
+                                                        <fieldset class="border p-3 mb-4">
+                                                            <legend class="w-auto text-primary">Tanda Batas Tanah</legend>
+                                                            <div class="mb-3">
+                                                                <label for="barang_batas_utara" class="form-label">Utara</label>
+                                                                <input type="text" name="barang_batas_utara" class="form-control" id="barang_batas_utara" />
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="barang_batas_timur" class="form-label">Timur</label>
+                                                                <input type="text" name="barang_batas_timur" class="form-control" id="barang_batas_timur" />
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="barang_batas_selatan" class="form-label">Selatan</label>
+                                                                <input type="text" name="barang_batas_selatan" class="form-control" id="barang_batas_selatan" />
+                                                            </div>
+                                                            <div class="mb-3">
+                                                                <label for="barang_batas_barat" class="form-label">Barat</label>
+                                                                <input type="text" name="barang_batas_barat" class="form-control" id="barang_batas_barat" />
+                                                            </div>
+                                                        </fieldset>
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </form>
+                     </div>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary"data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="btnSimpan" onclick="btnSimpan()">Save changes</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        const grid = new dhx.Grid("grid", {
+            columns: [
+                { minWidth: 300,id:"jenis_pengguna_barang", header: [{ text: "Pengguna Barang" }] },
+                { minWidth: 300,id:"barang_nama_barang", header: [{ text: "Barang" }] },
+                { minWidth: 300, id:"lokasi",header: [{ text: "Lokasi" }] },
+                { minWidth: 300, id:"barang_caraperolehan",header: [{ text: "Cara Perolehan/Penerimaan" }] },
+                { minWidth: 300, id:"NIBAR", header: [{ text: "NIBAR" }] }
+            ],
+            autoWidth: true,
+        });
+        const layout = new dhx.Layout("widget", {
+            rows: [
+                {
+                    id: "grid",
+                },
+                {
+                    height: 46,
+                    css: "dhx_widget--bordered",
+                    align: "start",
+                    cols: [
+                        {
+                            id: "pagination",
+                            width: "content"
+                        },
+                        {
+                            id: "text",
+                            width: "content",
+                            padding: 12,
+                        },
+                        {
+                            id: "page_size",
+                            width: 200,
+                            padding: 5
+                        }
+                    ]
+                }
+            ]
+        });
+        const lazyDataProxy = new dhx.LazyDataProxy("/Tanah/GetDataAset", {
+            from: 0,
+            limit: 15,
+            prepare: 5,
+            delay: 150
+        });
+        const pagination = new dhx.Pagination(null, {
+            css: "dhx_widget--bordered dhx_widget--no-border_top",
+            data: grid.data,
+            pageSize: 15
+        });
+
+        const combobox = new dhx.Combobox(null, {
+            readOnly: true,
+            data: [
+                { id: "10", value: "10 rows per page" },
+                { id: "15", value: "15 rows per page" },
+                { id: "20", value: "20 rows per page" },
+                { id: "25", value: "25 rows per page" },
+                { id: "30", value: "30 rows per page" },
+                { id: "50", value: "50 rows per page" },
+            ],
+            value: "15"
+        });
+        combobox.events.on("change", function (id) {
+            if (id) {
+                var size = +id;
+                const selectedCell = grid.selection.getCell();
+
+                if (grid.data.dataProxy && grid.data.dataProxy.config)
+                    lazyDataProxy.updateUrl("https://docs.dhtmlx.com/suite/backend/lazyload", {
+                        from: grid.data.dataProxy.config.from,
+                        limit: size,
+                        prepare: 0,
+                        delay: 150
+                    });
+                pagination.setPageSize(size);
+                updatePageInfo()
+
+                if (selectedCell) {
+                    const index = grid.data.getIndex(selectedCell.row.id);
+                    const page = Math.floor(index / size);
+                    pagination.setPage(page);
+                    dhx.awaitRedraw().then(() => {
+                        grid.scrollTo(selectedCell.row.id, "country");
+                    });
+                    grid.paint();
+                }
+            }
+
+        });
+
+        pagination.events.on("change", function (index, previousIndex) {
+            updatePageInfo()
+        });
+
+        layout.getCell("pagination").attach(pagination);
+        layout.getCell("grid").attach(grid);
+        layout.getCell("page_size").attach(combobox)
+
+        function updatePageInfo() {
+            layout.getCell("text").attachHTML(
+                "Records from "
+                + [pagination.getPage() * pagination.getPageSize() + 1]
+                + " to "
+                + [Math.min([pagination.getPage() + 1] * pagination.getPageSize(), grid.data.getLength())]
+                + " of "
+                + grid.data.getLength()
+            );
+        }
+        function loadGrid() {
+            const lazyDataProxy = new dhx.LazyDataProxy("/Tanah/GetDataAset", {
+                from: 0,
+                limit: 15,
+                prepare: 5,
+                delay: 150
+            });
+            grid.data.load(lazyDataProxy).then(function () {
+                updatePageInfo()
+            });
+        }
+        $(document).ready(function () {
+            loadGrid()
+        });
+        function btnSimpan() {
+            //alert($('form#form_tim_pendamping').serialize()); return;
+            $("#btnSimpan").attr("disabled", "true");
+            let namaKec = $("#barang_lok_kecamatan_id").text();
+            let namaKel = $("#barang_lok_kelurahan_desa_id").text();
+
+            var data = new FormData($("#form_perolehan_tanah")[0]);
+            // console.log(data); return;
+            $.ajax({
+                type: "POST",
+                url: "/TanahPage/SaveTanah",
+                enctype: "multipart/form-data",
+                processData: false,
+                contentType: false,
+                cache: false,
+                timeout: 600000,
+                data: data,
+                success: function (response) {
+                    console.log(response);
+                    $("#btnSimpan").removeAttr("disabled");
+
+                    Swal.fire({
+                        title: 'Informasi!',
+                        text: 'Data yang anda kirim telah berhasil disimpan!',
+                        //button: false,
+                        closeOnClickOutside: false,
+                        closeOnEsc: false,
+                        icon: "success"
+                    }).then((result) => {
+                        //swal.close();
+                        $('#form-modal').modal('hide');
+                        loadGrid();
+                    });
+
+                },
+                error: function (ee) {
+                    alert(ee);
+                    $("#btnSimpan").removeAttr("disabled");
+                }
+            });
+        }
+        function btn_tambah_data() {
+            $("#UnitID").val("");
+            $("#jenis_pengguna_barang").val("");
+            $("#unit_pengguna_barang_id").val("");
+            $("#unit_alamat").val("");
+            $("#barang_kode_barang").val("");
+            $("#barang_kode_lokasi").val("");
+            $("#barang_kode_reg_barang").val("");
+            $("#barang_nama_barang").val("");
+            $("#barang_spesifikasi").val("");
+            $("#barang_luas_tanah").val("");
+            $("#barang_satuan").val("");
+            $("#barang_kondisi_barang").val("");
+            $("#barang_lok_kecamatan_id").val("");
+            $("#barang_lok_kelurahan_desa_id").val("");
+            $("#barang_lok_jalan").val("");
+            $("#barang_lok_rt_rw").val("");
+            $("#barang_lok_koordinat").val("");
+            $("#barang_speklain_nama1").val("");
+            $("#barang_speklain_nilai1").val("");
+            $("#barang_speklain_nama2").val("");
+            $("#barang_speklain_nilai2").val("");
+            $("#barang_speklain_nama3").val("");
+            $("#barang_speklain_nilai3").val("");
+            $("#barang_speklain_nama4").val("");
+            $("#barang_speklain_nilai4").val("");
+            $("#barang_speklain_nama5").val("");
+            $("#barang_speklain_nilai5").val("");
+            $("#barang_dok_nama_dok").val("");
+            $("#barang_dok_tanggal").val("");
+            $("#barang_dok_nomor").val("");
+            $("#barang_dok_nama_kepemilikan").val("");
+            $("#barang_batas_utara").val("");
+            $("#barang_batas_timur").val("");
+            $("#barang_batas_selatan").val("");
+            $("#barang_batas_barat").val("");
+            $("#barang_caraperolehan").val("");
+            $("#barang_keterangan").val("");
+            $("#barang_diinputoleh_nama1").val("");
+            $("#barang_diinputoleh_id1").val("");
+            $("#barang_tanggal_input1").val("");
+            $("#barang_tanggal_perolehan").val("");
+            
+            // var strPhoto = "/image/no_photos.jpg";
+            // var drEvent = $('#barang_fotodenah_file').dropify(
+            //     {
+            //         defaultFile: strPhoto
+            //     }
+            // );
+            // drEvent = drEvent.data('dropify');
+            // drEvent.resetPreview();
+            // drEvent.clearElement();
+            // drEvent.settings.defaultFile = strPhoto;
+            // drEvent.destroy();
+            // drEvent.init();
+
+            $('#form-modal').modal('show');
+            // $('.modal-dialog').draggable({
+            //     handle: ".modal-header"
+            // });
+        }
+        function filterKel() {
+            $('#barang_lok_kecamatan_id').change(function () {
+                const selectedKecamatan = $(this).val();
+                const kecId = selectedKecamatan.split("-");
+                const $selectKel = $('#barang_lok_kelurahan_desa_id');
+                // Hapus opsi sebelumnya
+                $selectKel.empty().append('<option value="">Pilih Kelurahan</option>');
+                $('#barang_lok_kelurahan_desa_id').prop('disabled', true);
+
+                // Jika ada pilihan provinsi yang dipilih, tambahkan opsi kota
+                $.ajax({
+                    url: "/TanahPage/GetKelurahan",
+                    type: "GET",
+                    dataType: "json", // Jenis data yang diharapkan dari server
+                    success: function (response) {
+                        /* console.log(response); return; */
+                        let kel = JSON.parse(response.data);
+                        $.each(kel, function (index, kelurahan) {
+                            if (kelurahan.kecamatan_id == kecId[0]) {
+                                // console.log(kelurahan.nama)
+                                $('#barang_lok_kelurahan_desa_id').append(`<option value="${kelurahan.kelurahan_id}_${kelurahan.nama}">${kelurahan.nama}</option>`);
+                            }
+                        });
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Terjadi kesalahan: " + error); // Error handling
+                    }
+                });
+                $('#barang_lok_kelurahan_desa_id').prop('disabled', false);
+            });
+        }
+
+        function showFormCaraPerolehan(){
+            $("#barang_caraperolehan").on("change", () => {
+                if ($("#barang_caraperolehan").val() == "pengadaan barang yang dibeli atau diperoleh atas beban APBD"){
+                    $("#bebanapbd").css("display", "block");
+                }
+            });
+        }
+
+        const input = document.getElementById("search");
+        input.addEventListener("input", event => {
+            if(event.target.value != ""){
+                const value = event.target.value.toString().toLowerCase();
+                console.log(event.target.value);
+                grid.data.filter(obj => {
+                    return Object.values(obj).some(item =>
+                        item.toString().toLowerCase().includes(event.target.value)
+                    );
+
+                });
+            }
+            
+        });
+       
+    </script>
+}

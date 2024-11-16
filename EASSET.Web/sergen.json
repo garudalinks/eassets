@@ -1,0 +1,9 @@
+{
+  "Extends": "defaults@6.6.0",
+  "EnableGenerateFields": true,
+  "RootNamespace": "EASSET",
+  "UpgradeInfo": {
+    "InitialType": "Premium",
+    "InitialVersion": "8.6.2.0"
+  }
+}

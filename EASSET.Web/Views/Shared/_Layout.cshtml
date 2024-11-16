@@ -1,0 +1,83 @@
+@inject Serenity.Navigation.INavigationModelFactory NavigationModelFactory
+<!DOCTYPE html>
+@{
+    var hideNav = (string)Context.Request.Query["hideNav"] == "1";
+    var themeCookie = Context.Request.Cookies["ProThemeSelection"];
+    var theme = themeCookie != null && !string.IsNullOrEmpty(themeCookie) ? themeCookie : "azure-light";
+    var bsTheme = theme.EndsWith("-dark", StringComparison.OrdinalIgnoreCase) ? "dark" : "light";
+    var rtl = System.Globalization.CultureInfo.CurrentUICulture.TextInfo.IsRightToLeft;
+    var sidebarPaneCollapsed = Context?.Request?.Cookies?["SidebarPaneCollapsed"] == "1" ? " s-sidebar-pane-collapsed" : "";
+}
+<html lang="@System.Globalization.CultureInfo.CurrentUICulture.Name" class="pro theme-@theme@(hideNav ? " no-navigation" : "")" data-bs-theme="@bsTheme"@Html.Raw(rtl ? " dir=\"rtl\"" : "")>
+<head>
+    <partial name="@MVC.Views.Shared._LayoutHead" />
+    @RenderSection("Head", false)
+    <title>@(ViewData["Title"]) - EASSET</title>
+   <script type="text/javascript" src="../../codebase/suite.js?v=8.4.6"></script>
+	<link rel="stylesheet" href="../../codebase/suite.css?v=8.4.6">
+	<link rel="stylesheet" href="../common/index.css?v=8.4.6">
+    <link rel="stylesheet" href="../common/dropify.min.css">
+    <!-- custom sample head -->
+ 	@* <script src="../common/data.js?v=8.4.6"></script> *@
+    <style>
+        .s-EASSET-MasterData-KodeRekeningGrid {
+            height: 500px !important;
+        }
+
+            .s-EASSET-MasterData-KodeRekeningGrid .tool-group {
+                visibility: hidden;
+            }
+
+        .s-EASSET-MasterData-SubKegiatanGrid {
+            height: 500px !important;
+        }
+
+            .s-EASSET-MasterData-SubKegiatanGrid .tool-group {
+                visibility: hidden;
+            }
+
+        .slick-group {
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: space-evenly;
+            width: 100%;
+        }
+    </style>
+</head>
+<body id="s-@(ViewData["PageId"])Page" class="@(ViewData["BodyClass"]) @(sidebarPaneCollapsed)@(rtl ? " rtl" : "")">
+<div id="PageBackground" style="display: none"></div>
+@if (hideNav)
+{
+    <script type="module">
+        @RenderSection("PageInitScript", false)
+    </script>
+    <section class="content">
+        @RenderBody()
+    </section>
+}
+else
+{
+    <partial name=@MVC.Views.Shared._Sidebar model=@(NavigationModelFactory.Create()) />
+    <main class="s-main">
+        <section class="content">
+
+            @if (IsSectionDefined("ContentHeader"))
+            {
+            <section class="content-header">
+                @RenderSection("ContentHeader")
+            </section>
+            }
+            @RenderBody()
+        </section>
+    </main>
+}
+    <script src="~/js/aggrid.min.js"></script>
+    <script src="~/common/dropify.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.js" integrity="sha512-+k1pnlgt4F1H8L7t3z95o3/KO+o78INEcXTbnoJQ/F2VqDVhWoaiVml/OEHv9HsVgxUaVW+IbiZPUJQfF/YxZw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @RenderSection("Scripts", required: false)
+</body>
+</html>
